@@ -1,3 +1,4 @@
+
 import pandas as pd
 import joblib
 from django.shortcuts import render
@@ -28,8 +29,8 @@ def upload_file(request):
             try:
                 file = request.FILES["file"]
 
-                # Check file size (limit to 143MB)
-                if file.size > 150 * 1024 * 1024:  # 143MB in bytes
+                # Check file size (limit to 150MB)
+                if file.size > 150 * 1024 * 1024:
                     return render(request, "fraud_app/upload.html", {
                         "form": form,
                         "error": "File size exceeds the 150MB limit.",
@@ -37,7 +38,7 @@ def upload_file(request):
 
                 df = pd.read_csv(file)
 
-                # Drop 'Time' column if it exists (to match training data)
+                # Drop 'Time' column if it exists
                 if "Time" in df.columns:
                     df = df.drop(columns=["Time"])
 
@@ -63,12 +64,16 @@ def upload_file(request):
                         "error": "Prediction failed. Please check the uploaded file.",
                     })
 
-                # Store predictions in DataFrame
-                df["Logistic_Prediction"] = logistic_pred
-                df["RandomForest_Prediction"] = random_forest_pred
+                # Replace 1 with "Fraud" and 0 with "Not Fraud"
+                df["Logistic_Prediction"] = ["Fraud" if p == 1 else "Not Fraud" for p in logistic_pred]
+                df["RandomForest_Prediction"] = ["Fraud" if p == 1 else "Not Fraud" for p in random_forest_pred]
 
-                # Convert results to HTML table for display
-                table_html = df.to_html(classes="table table-striped", index=False)
+                # Convert DataFrame to HTML and add Bootstrap styling for fraud detection
+                table_html = df.to_html(classes="table table-bordered table-striped", index=False, escape=False)
+
+                # Manually add color styling
+                table_html = table_html.replace(">Fraud<", ' style="color: red; font-weight: bold;">Fraud<')
+                table_html = table_html.replace(">Not Fraud<", ' style="color: green; font-weight: bold;">Not Fraud<')
 
                 return render(request, "fraud_app/upload.html", {
                     "form": form,
@@ -85,4 +90,3 @@ def upload_file(request):
     else:
         form = UploadFileForm()
     return render(request, "fraud_app/upload.html", {"form": form})
-

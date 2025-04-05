@@ -2,25 +2,105 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Credit Card Fraud Detection</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Background with a gradient effect */
+        body {
+            background: linear-gradient(to right, #f8f9fb, #717a70);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: -20px;
+        }
+        
+
+
+        /* Style for bordered tables */
+        .table-bordered {
+            border: 2px solid black !important;
+            background: white;
+            color: black;
+        }
+
+        .table th, .table td {
+            border: 2px solid black !important;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        /* Upload button with hover effect */
+        .btn-custom {
+            background-color: #28a745;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .btn-custom:hover {
+            background-color: #218838;
+            transform: scale(1.05);
+        }
+
+        /* Stylish card headers */
+        .card-header {
+            font-weight: bold;
+            font-size: 20px;
+        }
+    </style>
 </head>
 <body>
-    <h2>Upload CSV File for Fraud Detection</h2>
-    
-    {% if error %}
-        <p style="color: red;">{{ error }}</p>
-    {% endif %}
 
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Upload</button>
-    </form>
+    <div class="container mt-5 container-custom">
+        <div class="row justify-content-center">
+            <div class="col-md-13">
+                <div class="card shadow-lg border-dark">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h2>🚀 Credit Card Fraud Detection</h2>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="text-center mb-4">📂 Upload CSV File for Fraud Detection</h5>
 
-    {% if table_html %}
-        <h3>Prediction Results</h3>
-        {{ table_html | safe }}
-    {% endif %}
+                        {% if error %}
+                            <div class="alert alert-danger" role="alert">
+                                {{ error }}
+                            </div>
+                        {% endif %}
+
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                {{ form.as_p }}
+                            </div>
+                            <button type="submit" class="btn btn-custom w-100">Upload & Predict</button>
+                        </form>
+                    </div>
+                </div>
+
+                {% if table_html %}
+                <div class="card mt-5 shadow-lg border-dark">
+                    <div class="card-header bg-dark text-white text-center">
+                        <h3>📊 Prediction Results</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped">
+                                {{ table_html | safe }}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
